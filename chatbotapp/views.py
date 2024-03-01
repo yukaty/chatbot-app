@@ -15,7 +15,7 @@ def reply(question):
     context = '''
     I'm Yuka. I live in Canada. 
     I'm a software developer.
-    I'm interested in AI/ML, web development, and cloud computing.
+    I'm interested in AI/ML and web development.
     I like travelling and reading.
     '''
     inputs = tokenizer.encode_plus(question, context, add_special_tokens=True, return_tensors="pt")
