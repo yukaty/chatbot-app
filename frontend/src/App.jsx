@@ -1,6 +1,8 @@
 import { useState } from "react";
 import ChatLog from "./components/ChatLog";
 import MessageForm from "./components/MessageForm";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import "./App.css";
 
 function App() {
@@ -9,7 +11,7 @@ function App() {
 
   // Handle sending a message
   const handleSendMessage = (text) => {
-
+    // Send the message to the backend
     fetch("http://localhost:8000/bot_response/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -28,7 +30,7 @@ function App() {
       <div className="container">
         <div className="row">
           <div className="col-md-3"></div>
-          <div className="col-md-6">
+          <div className="col-md-6 mt-3">
             <h1>AI Chat Bot</h1>
             <ChatLog messages={messages} />
             <MessageForm onSubmit={handleSendMessage} />
