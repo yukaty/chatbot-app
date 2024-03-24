@@ -1,6 +1,6 @@
-# Chatbot App with BERT
+# AI Chatbot App with BERT
 
-This Django-based Chatbot application utilizes the BERT model from the Transformers library to understand and respond to user queries in a conversational manner. 
+This Chatbot application utilizes the BERT model to understand and respond to user queries in a conversational manner.
 
 ## Features
 
@@ -11,7 +11,7 @@ This Django-based Chatbot application utilizes the BERT model from the Transform
 ![screenshot](https://github.com/yukaty/chatbot-app/assets/254470/57950aca-39e7-4d76-9742-e426e47187c0)
 
 
-## Setup 
+## Setup
 
 1. Clone the Repository
    ```bash
@@ -19,35 +19,16 @@ This Django-based Chatbot application utilizes the BERT model from the Transform
    cd chatbot-app
    ```
 
-2. Install Dependencies
-   ```bash
-   pip install -r requirements.txt
-   ```
+2. Start the Application
+   Use Docker Compose to build and start the application:
 
-3. Run the Django Application
-   ```bash
-   python manage.py runserver
-   ```
+    ```bash
+    docker-compose up --build -d
+    ```
 
-   Visit `http://localhost:8000` in your browser.
-   
+   Visit `http://localhost:5173` in your browser.
+
 The initial response from the chatbot may take some time, as the model needs to load and process the input for the first time. Subsequent interactions should be faster.
-
-## Setup using Docker
-
-   If you prefer using Docker, build the Docker image with:
-
-   ```bash
-   docker build -t chatbot-app .
-   ```
-
-   Then, run the Docker container using:
-
-   ```bash
-   docker run -d -p 8000:8000 chatbot-app
-   ```
-
-   Access the application via `http://localhost:8000` in your browser.
 
 ## How It Works
 
