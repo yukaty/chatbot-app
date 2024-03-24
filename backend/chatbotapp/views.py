@@ -1,7 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from transformers import AutoModelForQuestionAnswering, BertTokenizer
+from django.http import JsonResponse, HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_exempt
 import torch
+import json
 
 def home(request):
     return render(request, 'home.html')
@@ -13,7 +15,7 @@ model = AutoModelForQuestionAnswering.from_pretrained(model_name)
 def reply(question):
     tokenizer = BertTokenizer.from_pretrained(model_name)
     context = '''
-    I'm Yuka. I live in Canada. 
+    I'm Yuka. I live in Canada.
     I'm a software developer.
     I'm interested in AI/ML and web development.
     I like travelling and reading.
@@ -21,21 +23,32 @@ def reply(question):
     inputs = tokenizer.encode_plus(question, context, add_special_tokens=True, return_tensors="pt")
     input_ids = inputs["input_ids"].tolist()[0]
     output = model(**inputs)
-    answer_start = torch.argmax(output.start_logits)  
-    answer_end = torch.argmax(output.end_logits) + 1 
+    answer_start = torch.argmax(output.start_logits)
+    answer_end = torch.argmax(output.end_logits) + 1
     answer = tokenizer.convert_tokens_to_string(tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
     answer = answer.replace('[CLS]', '')
     answer = answer.replace('[SEP]', '')
     return answer
 
+@csrf_exempt # disable CSRF protection
 # Make the bot respond to the user input
 def bot_response(request):
-    input_data = request.POST.get('input_text')
-    if not input_data:
-        return HttpResponse('<h2>No data found</h2>', status=400)    
+    if request.method == 'POST':
+        try:
+            # get the input message
+            data = json.loads(request.body)
+            input_text = data.get('message')
+            if not input_text:
+                return HttpResponseBadRequest('No message found') # StatusCode: 400
 
-    bot_response = reply(input_data)
-    http_response = HttpResponse()
-    http_response.write(f"BOT:{bot_response}")
+            # get the bot response
+            bot_response = reply(input_text)
 
-    return http_response
+            # return the bot response as a JSON
+            return JsonResponse({'reply': bot_response})
+
+        except json.JSONDecodeError:
+            return HttpResponseBadRequest('Invalid JSON') # StatusCode: 400
+
+    else:
+        return HttpResponseBadRequest('Invalid request method') # StatusCode: 400
