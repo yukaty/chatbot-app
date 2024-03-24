@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import ChatLog from "./components/ChatLog";
+import MessageForm from "./components/MessageForm";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Define a state variable to store the messages
+  const [messages, setMessages] = useState([]);
+
+  // Handle sending a message
+  const handleSendMessage = (text) => {
+
+    fetch("http://localhost:8000/bot_response/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text }),
+    })
+    .then(response => response.json())
+    .then(data =>
+      // Update the messages state with the new messages
+      setMessages([...messages, { text: text, sender: "user" }, { text: data.reply, sender: "bot" }])
+    )
+    .catch(error => console.error("Error:", error));
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="App">
+      <div className="container">
+        <div className="row">
+          <div className="col-md-3"></div>
+          <div className="col-md-6">
+            <h1>AI Chat Bot</h1>
+            <ChatLog messages={messages} />
+            <MessageForm onSubmit={handleSendMessage} />
+          </div>
+          <div className="col-md-3"></div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
